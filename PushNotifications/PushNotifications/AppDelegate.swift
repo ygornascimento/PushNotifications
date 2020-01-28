@@ -39,7 +39,24 @@ extension AppDelegate: UIApplicationDelegate {
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
+    //4. - Notification working in foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.alert, .sound, .badge])
+    }
+    
+    //5. - Notification tap Action
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        defer {completionHandler()}
+        
+        guard response.actionIdentifier == UNNotificationDefaultActionIdentifier else { return }
+        
+        let payload = response.notification.request.content
+        guard payload.userInfo["beach"] != nil else { return }
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(identifier: "beach")
+        
+        window?.rootViewController?.present(vc, animated: false)
     }
 }
